@@ -8,7 +8,7 @@ function Menu() {
   const [caricamento, setCaricamento] = useState(true);
 
   useEffect(() => {
-    fetch('http://locahttps://pizzeria-mario-backend.vercel.app/lhost:5001/api/piatti')
+    fetch('http://https://pizzeria-mario-backend.vercel.app/api/piatti')
       .then(res => res.json())
       .then(dati => {
         setMenu(dati);
