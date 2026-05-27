@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { Container, Form, Button, Card, Alert } from 'react-bootstrap';
 
+const BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? 'http://localhost:5000' // Se sei sul PC usa il server locale
+  : 'https://pizzeria-mario-backend.vercel.app'; // Se sei online usa Vercel (METTI IL TUO LINK BACKEND)
 
 function Login() {
 	const [username, setUsername] = useState('');
@@ -16,7 +19,7 @@ function Login() {
 		setErrore('');
 
 		try {
-			const risposta = await fetch('http://localhost:5001/api/auth/login', {
+			const risposta = await fetch(`${BASE_URL}/api/auth/login`, {
 				method: 'POST',
 				headers: {'Content-Type': 'application/json' },
 				body: JSON.stringify({username: username, password: password})
