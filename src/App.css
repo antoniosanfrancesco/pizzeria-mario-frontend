@@ -1,0 +1,75 @@
+/* --------------------------------------------------------
+   1. IMPORT DEI FONT
+   -------------------------------------------------------- */
+/* Font per i testi (Inter) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+/* Il tuo nuovo font per i titoli (Melodrama) */
+@import url('./fonts/css/melodrama.css');
+
+/* --------------------------------------------------------
+   2. STILI DI BASE E TIPOGRAFIA
+   -------------------------------------------------------- */
+body {
+  background-color: #dfdcb9 !important; /* Crema chiaro (60%) */
+  color: #202e32 !important;            /* Antracite scuro per i testi */
+  font-family: 'Inter', sans-serif !important; 
+  -webkit-font-smoothing: antialiased;   /* Ottimizzazione nitidezza caratteri */
+}
+
+/* 🌟 TITOLI PRINCIPALI AGGIORNATI CON MELODRAMA */
+h1, h2, h3, h4, .navbar-brand {
+  font-family: 'Melodrama-Bold', serif !important; /* Applicato Melodrama */
+  color: #202e32;
+  letter-spacing: 0.5px; /* Leggermente più largo per valorizzare questo font */
+}
+
+/* Prezzi, elementi in grassetto e Badge delle categorie */
+.text-success, td strong, .badge {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600; /* Rende i dettagli importanti più marcati */
+}
+
+/* --------------------------------------------------------
+   3. COMPONENTI STRUTTURALI (NavBar & Footer)
+   -------------------------------------------------------- */
+.navbar-custom {
+  background-color: #202e32 !important; /* Sfondo scuro elegante */
+  margin-bottom: 20px;                  /* Distanza di sicurezza dal contenuto */
+}
+
+.footer-custom {
+  background-color: #202e32 !important; /* Sfondo scuro coerente con la NavBar */
+  border-top: 1px solid #586c5c;        /* Sottile linea di separazione verde salvia */
+}
+
+/* --------------------------------------------------------
+   4. ELEMENTI DEL MENU (Card, Tabelle e Pulsanti)
+   -------------------------------------------------------- */
+/* Card dei piatti */
+.card-piatto {
+  background-color: #586c5c !important; /* Verde salvia scuro */
+  color: #dfdcb9 !important;            /* Testo chiaro crema per contrasto */
+  border: none;
+  overflow: hidden;                     /* Impedisce al contenuto di uscire dai bordi tondi */
+}
+
+/* Pulsante personalizzato (es. Inserisci, Salva) */
+.btn-custom-success {
+  background-color: #85937a !important; /* Verde oliva medio */
+  border-color: #85937a !important;
+  color: #202e32 !important;            /* Testo scuro leggibile */
+  font-weight: bold;
+  transition: all 0.3s ease;            /* Transizione fluida al passaggio del mouse */
+}
+
+.btn-custom-success:hover {
+  background-color: #586c5c !important; /* Cambia in salvia scuro al passaggio */
+  border-color: #586c5c !important;
+  color: #dfdcb9 !important;            /* Il testo diventa crema */
+}
+
+/* Tabelle di riepilogo nella gestione amministrativa */
+.table-custom {
+  background-color: #a9af90 !important; /* Verde salvia chiaro */
+}
