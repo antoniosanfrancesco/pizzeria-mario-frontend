@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Container, Form, Button, Card, Alert } from 'react-bootstrap';
 
 const BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-  ? 'http://localhost:5000' // Se sei sul PC usa il server locale
+  ? 'http://localhost:5005' // Se sei sul PC usa il server locale
   : 'https://pizzeria-mario-backend.vercel.app'; // Se sei online usa Vercel (METTI IL TUO LINK BACKEND)
 
 function Login() {

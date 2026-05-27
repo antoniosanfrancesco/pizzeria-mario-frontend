@@ -2,9 +2,13 @@ import { useState, useEffect } from 'react';
 import { Container, Form, Button, Table, Row, Col, Badge, Card} from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
+
 function GestioneMenu() {
   const [menu, setMenu] = useState([]);
-  const API_URL = 'http://localhost:5001/api/piatti';
+  const BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? 'http://localhost:5005' // Se sei sul tuo PC usa la porta 5005
+  : 'https://pizzeria-mario-backend.vercel.app'; // Se sei online usa Vercel
+
 
   const statoInizialeForm = {nome: '', prezzo: '', ingredienti: '', categoria: 'Pizze', vegano: false};
   const [formData, setFormData] = useState(statoInizialeForm);
@@ -13,7 +17,7 @@ function GestioneMenu() {
 
   // carica i piatti all'avvio (Resta pubblica, non serve il token)
   const caricaPiatti = () => {
-    fetch(API_URL)
+    fetch(`${BASE_URL}/api/piatti`)
       .then(res => res.json())
       .then(dati => setMenu(dati))
       .catch(err => console.error("Errore nel caricamento:", err ));
@@ -37,7 +41,7 @@ function GestioneMenu() {
     e.preventDefault();
 
     const metodo = idInModifica ? 'PUT' : 'POST';
-    const urlSpecifico = idInModifica ? `${API_URL}/${idInModifica}`: API_URL;
+    const urlSpecifico = idInModifica ? `${BASE_URL}/${idInModifica}`: BASE_URL;
     
     // 1. Recuperiamo il token di autenticazione
     const token = localStorage.getItem('token');
@@ -81,7 +85,7 @@ function GestioneMenu() {
       // 1. Recuperiamo il token di autenticazione
       const token = localStorage.getItem('token');
 
-      fetch(`${API_URL}/${id}`, {
+      fetch(`${BASE_URL}/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}` // Spediamo il token negli headers
