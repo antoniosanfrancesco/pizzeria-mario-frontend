@@ -1,5 +1,6 @@
 import { Container, Col, Card, Row, Badge } from 'react-bootstrap';
 import { useState, useEffect } from 'react';
+import fotoPizza from '../assets/img/pizza.jpg';
 
 function Menu() {
   
@@ -32,7 +33,7 @@ function Menu() {
 				<Row className='mb-4'>
 					<Col xs={12}>
 						<img
-							src='src/assets/img/pizza.jpg'
+							src={fotoPizza}
 							className="img-fluid w-100 shadow-sm"
 							style={{ 
 								height: '300px', 
