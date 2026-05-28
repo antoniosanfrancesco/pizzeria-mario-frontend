@@ -103,13 +103,13 @@ function GestioneMenu() {
     <Container className='my-5'>
       <h2 className='text-center mb-4'>Gestione del Menu</h2>
       <div className="text-center mb-4">
-        <Link to="/" className="btn btn-secondary">
+        <Link to="/" className="btn btn-secondary rounded-5">
          Torna al Menu Pubblico
         </Link>
       </div>
 
       {/* Inserimento o modifica */}
-      <Card className="p-4 shadow-sm mb-5 bg-light">
+      <Card className="p-4 shadow-sm mb-5 bg-light rounded-5">
         <h4>{idInModifica ? 'Modifica Piatto' : 'Aggiungi un Nuovo Piatto'}</h4>
         <Form onSubmit={gestisciInvio}>
           <Row className="g-3">
@@ -151,7 +151,7 @@ function GestioneMenu() {
                     Annulla
                   </Button>
                 )}
-                <Button className="btn-custom-success" variant={idInModifica ? "warning" : "success"} type="submit">
+                <Button className="btn-custom-success rounded-5" variant={idInModifica ? "warning" : "success"} type="submit">
                   {idInModifica ? 'Salva Modifiche' : 'Inserisci nel Menu'}
                 </Button>
               </div>
@@ -162,42 +162,46 @@ function GestioneMenu() {
 
       {/* TABELLA DI RIEPILOGO */}
       <h4>📋 Piatti Attualmente nel Menu</h4>
-      <Table striped bordered hover responsive className="shadow-sm">
-        <thead className="table-dark">
-          <tr>
-            <th>Nome</th>
-            <th>Categoria</th>
-            <th>Prezzo</th>
-            <th>Ingredienti</th>
-            <th>Note</th>
-            <th>Azioni</th>
-          </tr>
-        </thead>
-        <tbody>
-          {menu.map(piatto => (
-            <tr key={piatto._id}>
-              <td><strong>{piatto.nome}</strong></td>
-              <td><Badge bg="info" text="dark">{piatto.categoria}</Badge></td>
-              <td>€{Number(piatto.prezzo).toFixed(2)}</td>
-              <td className="small text-muted">{piatto.ingredienti}</td>
-              <td>{piatto.vegano ? <Badge bg="success">Vegano 🌱</Badge> : '-'}</td>
-              <td>
-                <Button variant="warning" size="sm" className="me-2" onClick={() => attivaModifica(piatto)}>
-                  Modifica
-                </Button>
-                <Button variant="danger" size="sm" onClick={() => cancellaPiatto(piatto._id)}>
-                  Elimina
-                </Button>
-              </td>
-            </tr>
-          ))}
-          {menu.length === 0 && (
-            <tr>
-              <td colSpan="6" className="text-center text-muted">Nessun piatto nel menu. Aggiungine uno sopra!</td>
-            </tr>
-          )}
-        </tbody>
-      </Table>
+				<div className='rounded-5 overflow-hidden'> 
+					<Table striped bordered hover responsive className="shadow-sm">
+						<thead className="table-dark">
+							<tr>
+								<th className='ps-4 py-3'>Nome</th>
+								<th className='py-3'>Categoria</th>
+								<th className='py-3'>Prezzo</th>
+								<th className='py-3'>Ingredienti</th>
+								<th className='py-3'>Note</th>
+								<th className='py-3'>Azioni</th>
+							</tr>
+						</thead>
+						<tbody>
+							{menu.map(piatto => (
+								<tr key={piatto._id}>
+									<td><strong>{piatto.nome}</strong></td>
+									<td><Badge bg="info" text="dark">{piatto.categoria}</Badge></td>
+									<td>€{Number(piatto.prezzo).toFixed(2)}</td>
+									<td className="small text-muted">{piatto.ingredienti}</td>
+									<td>{piatto.vegano ? <Badge bg="success">Vegano 🌱</Badge> : '-'}</td>
+									<td>
+										<div className='d-flex flex-column flex-md-row justify-content-center gap-1'>
+											<Button variant="warning" size="sm" className="me-2 rounded-5 mb-1" onClick={() => attivaModifica(piatto)}>
+												Modifica
+											</Button>	
+											<Button variant="danger" size="sm" className='rounded-5' onClick={() => cancellaPiatto(piatto._id)}>
+												Elimina
+											</Button>
+										</div>	
+									</td>
+								</tr>
+							))}
+							{menu.length === 0 && (
+								<tr>
+									<td colSpan="6" className="text-center text-muted">Nessun piatto nel menu. Aggiungine uno sopra!</td>
+								</tr>
+							)}
+						</tbody>
+					</Table>
+				</div>	
     </Container>
   )
 }
