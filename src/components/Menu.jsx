@@ -21,7 +21,7 @@ function Menu() {
   }, []);
 
   
-  const categorie = [...new Set(menu.map(p => p.categoria))];
+  const categorie = [...new Set(menu?.map(p => p.categoria))];
 
   if (caricamento) {
     return <Container className='text-center my-5'><h3>Caricamento del menu in corso... </h3></Container>;
@@ -46,12 +46,14 @@ function Menu() {
 				</Row>
 				<h2 className="text-center mb-5 mt-4 pt-6" data-aos='fade-up'>Il Nostro Menu</h2>
 
-				{categorie?.map(cat => (
+				{Array.isArray(categorie) && Array.isArray(menu) ? (
+				
+				categorie?.map(cat => (
 					<div key={cat} className="mb-5">
 						<h3 id={cat} className=" p-2 border-bottom pb-2 mb-4 card-piatto rounded-3" data-aos='fade-up'>{cat}</h3>
 						<Row>
 							{/* Cicliamo sui piatti che appartengono a QUESTA categoria */}
-							{menu.filter(p => p.categoria === cat).map(piatto => (
+							{menu?.filter(p => p.categoria === cat).map(piatto => (
 								<Col key={piatto._id} xs={12} md={6} lg={4} className='mb-4'>
 									<Card className='h-100 shadow-sm rounded-5' data-aos='fade-up'>
 										<Card.Body className='border-0'>
@@ -74,9 +76,15 @@ function Menu() {
 							))}
 						</Row>
 					</div>
-				))}
+				)) 
+				) : (
+					<p className="text-center text-muted my-5">
+            Il server gratuito sta impiegando più tempo del previsto a svegliarsi. 
+            Il menu apparirà automaticamente tra pochi istanti...
+          </p>
 
-				{menu.length === 0 && (
+				)}	
+				{Array.isArray(menu) && menu.length === 0 && (
 					<p className="text-center text-muted">Il menu è attualmente vuoto. Aggiungi dei piatti dalla pagina di gestione!</p>
 				)}
 			</Container>

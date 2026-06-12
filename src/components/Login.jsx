@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Container, Form, Button, Card, Alert } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom'; // 1️⃣ MODIFICA: Importa useNavigate
+import { useNavigate } from 'react-router-dom'; // MODIFICA: Importa useNavigate
 
 const BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
   ? 'http://localhost:5005' 
@@ -12,7 +12,7 @@ function Login() {
   const [errore, setErrore] = useState('');
   const [caricamento, setCaricamento] = useState(false);
 
-  const navigate = useNavigate(); // 2️⃣ MODIFICA: Inizializza il navigatore
+  const navigate = useNavigate(); //  MODIFICA: Inizializza il navigatore
 
   const gestisciLogin = async (e) => {
     e.preventDefault();
@@ -35,7 +35,7 @@ function Login() {
       // salvo il token se il login funziona
       localStorage.setItem('token', dati.token);
 
-      // 3️⃣ MODIFICA: Navigazione fluida senza ricaricare la pagina
+      //  MODIFICA: Navigazione fluida senza ricaricare la pagina
       navigate('/gestione'); 
 
     } catch (err) {
