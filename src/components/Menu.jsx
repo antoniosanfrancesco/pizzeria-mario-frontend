@@ -8,18 +8,25 @@ function Menu() {
   const [caricamento, setCaricamento] = useState(true);
 
   useEffect(() => {
-    fetch('https://pizzeria-mario-backend.vercel.app/api/piatti')
-      .then(res => res.json())
-      .then(dati => {
-        setMenu(dati);
-        setCaricamento(false);
-      })
-      .catch(err => {
-        console.error("Errore nel caricamento:", err);
-        setCaricamento(false);
-      });
-  }, []);
-
+  fetch('https://pizzeria-mario-backend.vercel.app/api/piatti')
+    .then(res => {
+      if (!res.ok) {
+        throw new Error(`Errore HTTP: ${res.status}`);
+      }
+      return res.json();
+    })
+    .then(dati => {
+      // Se il backend restituisce un array lo imposta, altrimenti fallback ad array vuoto
+      setMenu(Array.isArray(dati) ? dati : []);
+    })
+    .catch(err => {
+      console.error("Errore nel caricamento del menu:", err);
+      setMenu([]); // Imposta array vuoto per far scattare il messaggio
+    })
+    .finally(() => {
+      setCaricamento(false); // Sblocca SEMPRE la schermata di caricamento
+    });
+}, []);
   
   const categorie = [...new Set(menu?.map(p => p.categoria))];
 

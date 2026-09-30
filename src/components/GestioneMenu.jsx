@@ -1,72 +1,74 @@
 import { useState, useEffect } from 'react';
-import { Container, Form, Button, Table, Row, Col, Badge, Card} from 'react-bootstrap';
+import { Container, Form, Button, Table, Row, Col, Badge, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-
 
 function GestioneMenu() {
   const [menu, setMenu] = useState([]);
+  
   const BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-  ? 'http://localhost:5005' // Se sei sul tuo PC usa la porta 5005
-  : 'https://pizzeria-mario-backend.vercel.app'; // Se sei online usa Vercel
+    ? 'http://localhost:5005' // Se sei sul tuo PC usa la porta 5005
+    : 'https://pizzeria-mario-backend.vercel.app'; // Se sei online usa Vercel
 
-
-  const statoInizialeForm = {nome: '', prezzo: '', ingredienti: '', categoria: 'Pizze', vegano: false};
+  const statoInizialeForm = { nome: '', prezzo: '', ingredienti: '', categoria: 'Pizze', vegano: false };
   const [formData, setFormData] = useState(statoInizialeForm);
-
   const [idInModifica, setIdInModifica] = useState(null);
 
-  // carica i piatti all'avvio (Resta pubblica, non serve il token)
+  // Carica i piatti all'avvio (Resta pubblica, non serve il token)
   const caricaPiatti = () => {
     fetch(`${BASE_URL}/api/piatti`)
       .then(res => res.json())
-      .then(dati => setMenu(dati))
-      .catch(err => console.error("Errore nel caricamento:", err ));
+      .then(dati => setMenu(Array.isArray(dati) ? dati : []))
+      .catch(err => console.error("Errore nel caricamento:", err));
   };
 
   useEffect(() => {
     caricaPiatti();
   }, []);
 
-  // gestisce i cambiamenti nei campi del form 
+  // Gestisce i cambiamenti nei campi del form 
   const gestisciCambioInput = (e) => {
-    const {name, value, type, checked} = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData({
       ...formData,
-      [name]: type === 'checkbox' ? checked: value
+      [name]: type === 'checkbox' ? checked : value
     });
   };
 
-  // invia i dati (inserimento o modifica) - PROTETTA 
+  // Invia i dati (inserimento o modifica) - PROTETTA 🔒
   const gestisciInvio = (e) => {
     e.preventDefault();
 
     const metodo = idInModifica ? 'PUT' : 'POST';
-    const urlSpecifico = idInModifica ? `${BASE_URL}/${idInModifica}`: BASE_URL;
     
-    // 1. Recuperiamo il token di autenticazione
+    // CORRETTO: Inserito /api/piatti per indirizzare la rotta Express corretta
+    const urlSpecifico = idInModifica 
+      ? `${BASE_URL}/api/piatti/${idInModifica}` 
+      : `${BASE_URL}/api/piatti`;
+    
+    // Recuperiamo il token di autenticazione
     const token = localStorage.getItem('token');
 
     fetch(urlSpecifico, {
       method: metodo,
       headers: {
-        'Content-Type' : 'application/json',
+        'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}` // Spediamo il token negli headers
       },
       body: JSON.stringify(formData)
     })
       .then(res => {
-        if(!res.ok) throw new Error("Errore nel salvataggio. Sessione scaduta o non autorizzata.");
+        if (!res.ok) throw new Error("Errore nel salvataggio. Sessione scaduta o non autorizzata.");
         return res.json();
       })
       .then(() => {
-        caricaPiatti(); // refresha la tabella
-        setFormData(statoInizialeForm); //svuota il form
-        setIdInModifica(null); //resetta lo stato di modifica
+        caricaPiatti(); // Refresha la tabella
+        setFormData(statoInizialeForm); // Svuota il form
+        setIdInModifica(null); // Resetta lo stato di modifica
       })
       .catch(err => alert(err.message));
-  }
+  };
 
-  // attiva la modifica 
+  // Attiva la modifica 
   const attivaModifica = (piatto) => {
     setIdInModifica(piatto._id);
     setFormData({
@@ -78,22 +80,23 @@ function GestioneMenu() {
     });
   };
 
-  // cancella un piatto - PROTETTA 🔒
+  // Cancella un piatto - PROTETTA 🔒
   const cancellaPiatto = (id) => {
-    if(window.confirm("Sei sicuro di voler eliminare questo piatto dal menu?")) {
+    if (window.confirm("Sei sicuro di voler eliminare questo piatto dal menu?")) {
       
-      // 1. Recuperiamo il token di autenticazione
+      // Recuperiamo il token di autenticazione
       const token = localStorage.getItem('token');
 
-      fetch(`${BASE_URL}/${id}`, {
+      // CORRETTO: Inserito /api/piatti per la richiesta DELETE
+      fetch(`${BASE_URL}/api/piatti/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}` // Spediamo il token negli headers
         }
       })
         .then(res => {
-          if(!res.ok) throw new Error("Errore nella cancellazione. Sessione scaduta o non autorizzata.");
-          caricaPiatti(); //refresh dei piatti
+          if (!res.ok) throw new Error("Errore nella cancellazione. Sessione scaduta o non autorizzata.");
+          caricaPiatti(); // Refresh dei piatti
         })
         .catch(err => alert(err.message));
     }
@@ -104,7 +107,7 @@ function GestioneMenu() {
       <h2 className='text-center mb-4'>Gestione del Menu</h2>
       <div className="text-center mb-4">
         <Link to="/" className="btn btn-secondary rounded-5">
-         Torna al Menu Pubblico
+          Torna al Menu Pubblico
         </Link>
       </div>
 
@@ -116,13 +119,28 @@ function GestioneMenu() {
             <Col md={6}>
               <Form.Group>
                 <Form.Label>Nome Piatto</Form.Label>
-                <Form.Control type="text" name="nome" value={formData.nome} onChange={gestisciCambioInput} required placeholder="Es. Pizza Diavola" />
+                <Form.Control 
+                  type="text" 
+                  name="nome" 
+                  value={formData.nome} 
+                  onChange={gestisciCambioInput} 
+                  required 
+                  placeholder="Es. Pizza Diavola" 
+                />
               </Form.Group>
             </Col>
             <Col md={3}>
               <Form.Group>
                 <Form.Label>Prezzo (€)</Form.Label>
-                <Form.Control type="number" step="0.1" name="prezzo" value={formData.prezzo} onChange={gestisciCambioInput} required placeholder="Es. 8.50" />
+                <Form.Control 
+                  type="number" 
+                  step="0.1" 
+                  name="prezzo" 
+                  value={formData.prezzo} 
+                  onChange={gestisciCambioInput} 
+                  required 
+                  placeholder="Es. 8.50" 
+                />
               </Form.Group>
             </Col>
             <Col md={3}>
@@ -140,18 +158,40 @@ function GestioneMenu() {
             <Col md={12}>
               <Form.Group>
                 <Form.Label>Ingredienti</Form.Label>
-                <Form.Control type="text" name="ingredienti" value={formData.ingredienti} onChange={gestisciCambioInput} required placeholder="Es. Pomodoro, mozzarella, salame piccante" />
+                <Form.Control 
+                  type="text" 
+                  name="ingredienti" 
+                  value={formData.ingredienti} 
+                  onChange={gestisciCambioInput} 
+                  required 
+                  placeholder="Es. Pomodoro, mozzarella, salame piccante" 
+                />
               </Form.Group>
             </Col>
             <Col md={12} className="d-flex align-items-center justify-content-between">
-              <Form.Check type="checkbox" label="Questo piatto è Vegano 🌱" name="vegano" checked={formData.vegano} onChange={gestisciCambioInput} id="checkbox-vegano" />
+              <Form.Check 
+                type="checkbox" 
+                label="Questo piatto è Vegano 🌱" 
+                name="vegano" 
+                checked={formData.vegano} 
+                onChange={gestisciCambioInput} 
+                id="checkbox-vegano" 
+              />
               <div>
                 {idInModifica && (
-                  <Button variant="secondary" className="me-2" onClick={() => { setFormData(statoInizialeForm); setIdInModifica(null); }}>
+                  <Button 
+                    variant="secondary" 
+                    className="me-2 rounded-5" 
+                    onClick={() => { setFormData(statoInizialeForm); setIdInModifica(null); }}
+                  >
                     Annulla
                   </Button>
                 )}
-                <Button className="btn-custom-success rounded-5" variant={idInModifica ? "warning" : "success"} type="submit">
+                <Button 
+                  className="btn-custom-success rounded-5" 
+                  variant={idInModifica ? "warning" : "success"} 
+                  type="submit"
+                >
                   {idInModifica ? 'Salva Modifiche' : 'Inserisci nel Menu'}
                 </Button>
               </div>
@@ -162,48 +202,60 @@ function GestioneMenu() {
 
       {/* TABELLA DI RIEPILOGO */}
       <h4>📋 Piatti Attualmente nel Menu</h4>
-				<div className='rounded-5 overflow-hidden'> 
-					<Table striped bordered hover responsive className="shadow-sm">
-						<thead className="table-dark">
-							<tr>
-								<th className='ps-4 py-3'>Nome</th>
-								<th className='py-3'>Categoria</th>
-								<th className='py-3'>Prezzo</th>
-								<th className='py-3'>Ingredienti</th>
-								<th className='py-3'>Note</th>
-								<th className='py-3'>Azioni</th>
-							</tr>
-						</thead>
-						<tbody>
-							{menu.map(piatto => (
-								<tr key={piatto._id}>
-									<td><strong>{piatto.nome}</strong></td>
-									<td><Badge bg="info" text="dark">{piatto.categoria}</Badge></td>
-									<td>€{Number(piatto.prezzo).toFixed(2)}</td>
-									<td className="small text-muted">{piatto.ingredienti}</td>
-									<td>{piatto.vegano ? <Badge bg="success">Vegano 🌱</Badge> : '-'}</td>
-									<td>
-										<div className='d-flex flex-column flex-md-row justify-content-center gap-1'>
-											<Button variant="warning" size="sm" className="me-2 rounded-5 mb-1" onClick={() => attivaModifica(piatto)}>
-												Modifica
-											</Button>	
-											<Button variant="danger" size="sm" className='rounded-5' onClick={() => cancellaPiatto(piatto._id)}>
-												Elimina
-											</Button>
-										</div>	
-									</td>
-								</tr>
-							))}
-							{menu.length === 0 && (
-								<tr>
-									<td colSpan="6" className="text-center text-muted">Nessun piatto nel menu. Aggiungine uno sopra!</td>
-								</tr>
-							)}
-						</tbody>
-					</Table>
-				</div>	
+      <div className='rounded-5 overflow-hidden'> 
+        <Table striped bordered hover responsive className="shadow-sm">
+          <thead className="table-dark">
+            <tr>
+              <th className='ps-4 py-3'>Nome</th>
+              <th className='py-3'>Categoria</th>
+              <th className='py-3'>Prezzo</th>
+              <th className='py-3'>Ingredienti</th>
+              <th className='py-3'>Note</th>
+              <th className='py-3 text-center'>Azioni</th>
+            </tr>
+          </thead>
+          <tbody>
+            {menu.map(piatto => (
+              <tr key={piatto._id}>
+                <td><strong>{piatto.nome}</strong></td>
+                <td><Badge bg="info" text="dark">{piatto.categoria}</Badge></td>
+                <td>€{Number(piatto.prezzo).toFixed(2)}</td>
+                <td className="small text-muted">{piatto.ingredienti}</td>
+                <td>{piatto.vegano ? <Badge bg="success">Vegano 🌱</Badge> : '-'}</td>
+                <td>
+                  <div className='d-flex flex-column flex-md-row justify-content-center gap-1'>
+                    <Button 
+                      variant="warning" 
+                      size="sm" 
+                      className="me-md-1 rounded-5 mb-1 mb-md-0" 
+                      onClick={() => attivaModifica(piatto)}
+                    >
+                      Modifica
+                    </Button> 
+                    <Button 
+                      variant="danger" 
+                      size="sm" 
+                      className='rounded-5' 
+                      onClick={() => cancellaPiatto(piatto._id)}
+                    >
+                      Elimina
+                    </Button>
+                  </div>  
+                </td>
+              </tr>
+            ))}
+            {menu.length === 0 && (
+              <tr>
+                <td colSpan="6" className="text-center text-muted py-4">
+                  Nessun piatto nel menu. Aggiungine uno dal modulo sopra!
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </Table>
+      </div>  
     </Container>
-  )
+  );
 }
 
 export default GestioneMenu;
